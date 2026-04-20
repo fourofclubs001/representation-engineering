@@ -180,7 +180,10 @@ def plot_detection_results(input_ids, rep_reader_scores_dict, THRESHOLD, start_a
 def plot_lat_scans(input_ids, rep_reader_scores_dict, layer_slice, start_token='▁A'):
     for rep, scores in rep_reader_scores_dict.items():
 
-        start_tok = input_ids.index(start_token)
+        matches = [i for i, tok in enumerate(input_ids) if start_token in tok]
+        if not matches:
+            raise ValueError(f"'{start_token}' not found in any token. Tokens: {input_ids[:30]}")
+        start_tok = matches[-1]
         print(start_tok, np.array(scores).shape)
         standardized_scores = np.array(scores)[start_tok:start_tok+40,layer_slice]
         # print(standardized_scores.shape)
